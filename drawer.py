@@ -37,19 +37,27 @@ def get_fragment_id(fragment_string):
     glycan_id_string = fragment_string.split("|")[0].split(":")[-1]
     return get_glycan_id(glycan_id_string)
 
-
 class Drawer:
     def __init__(self, 
         spectrum_path="10MixGlycanStandards_C18_50cm_091520.mgf", 
         annotated_path="10MixGlycanStandards_C18_50cm_091520_annotated.csv"):
         self.spectra = read_mgf(spectrum_path)
         self.df_mark = pd.read_csv(annotated_path)
-
-    def draw(self, scan=15666):
+        self.scans = sorted(self.df_mark.scan)
+    
+    def display(self, scan=15666, figsize=(4, 4)):
+        fig, ax = plt.subplots(figsize=figsize)
         df_select = self.df_mark[self.df_mark.scan == scan]
         glycan_id = get_glycan_id(df_select.glycan.iloc[0])
 
-        fig, ax = plt.subplots(figsize=(16, 6))
+        # plot glycan
+        generate_glycan(glycan_id, "glycan_temp.png")
+
+    def draw(self, scan=15666, figsize=(8, 3)):
+        df_select = self.df_mark[self.df_mark.scan == scan]
+        glycan_id = get_glycan_id(df_select.glycan.iloc[0])
+
+        fig, ax = plt.subplots(figsize=figsize)
 
         peaks = insert_peaks(self.spectra[scan].peaks)
         kmeans, low_index = cluster_peaks(peaks, 3)
@@ -60,19 +68,6 @@ class Drawer:
         ax.set_ylabel("Intensity")
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
-
-        # plot glycan
-        generate_glycan(glycan_id)
-        img_x = np.min(peaks.mz) * 1.2
-        img_y = np.max(peaks.intensity) * 0.8
-        img_insert = plt.imread('temp.png')
-        imagebox = OffsetImage(img_insert, zoom=0.5)
-        imagebox.image.axes = ax
-
-        ab = AnnotationBbox(imagebox, (img_x, img_y))
-        ab.patch.set_edgecolor('none')
-        ab.patch.set_facecolor('none')
-        ax.add_artist(ab)
 
         # annotations
         for index, row in self.df_mark[self.df_mark.scan == 15666].iterrows():
@@ -112,6 +107,8 @@ class Drawer:
             ax.add_artist(ab)
         # save
         fig.savefig("temp.png", transparent=True)
+        return fig
 
-draw = Drawer()
-draw.draw()
+if __name__ == "__main__":
+    draw = Drawer()
+    draw.draw()
