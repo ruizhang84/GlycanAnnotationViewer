@@ -20,6 +20,7 @@ def get_figure_size(glycan_id, size=4, line_length = 1000):
     ratio = abs(x1 - x2) / abs(y1 - y2)
     fig.clear()
     ax.clear()
+    plt.close()
     return  abs(x1 - x2) / line_length / 4, abs(y1 - y2) / line_length / 4
 
 def generate_glycan(glycan_id, img_name="temp.png", size=4, line_length = 1000):
@@ -29,6 +30,7 @@ def generate_glycan(glycan_id, img_name="temp.png", size=4, line_length = 1000):
     fig.savefig(img_name, transparent=True)
     fig.clear()
     ax.clear()
+    plt.close()
 
 def get_glycan_id(glycan_string):
     return [int(i) for i in glycan_string.split()]
@@ -45,14 +47,14 @@ class Drawer:
         self.df_mark = pd.read_csv(annotated_path)
         self.scans = sorted(self.df_mark.scan)
 
-    def draw(self, scan=15666, figsize=(8, 3)):
+    def draw(self, scan=15666, figsize=(16, 6)):
         df_select = self.df_mark[self.df_mark.scan == scan]
         glycan_id = get_glycan_id(df_select.glycan.iloc[0])
 
         fig, ax = plt.subplots(figsize=figsize)
 
+        kmeans, low_index = cluster_peaks(self.spectra[scan].peaks, 3)
         peaks = insert_peaks(self.spectra[scan].peaks)
-        kmeans, low_index = cluster_peaks(peaks, 3)
 
         # plot spectrum
         ax.plot(np.round(peaks.mz, 2), peaks.intensity, "k")
@@ -64,9 +66,9 @@ class Drawer:
         # plot glycan
         generate_glycan(glycan_id)
         img_x = np.min(peaks.mz) * 1.2
-        img_y = np.max(peaks.intensity) * 0.8
+        img_y = np.max(peaks.intensity)
         img_insert = plt.imread('temp.png')
-        imagebox = OffsetImage(img_insert, zoom=0.5)
+        imagebox = OffsetImage(img_insert, zoom=0.3)
         imagebox.image.axes = ax
 
         ab = AnnotationBbox(imagebox, (img_x, img_y))
@@ -75,7 +77,7 @@ class Drawer:
         ax.add_artist(ab)
 
         # annotations
-        for index, row in self.df_mark[self.df_mark.scan == 15666].iterrows():
+        for index, row in self.df_mark[self.df_mark.scan == scan].iterrows():
             mz = np.round(row.mz, 2)
             intensity = row.intensity
             xy = (mz, intensity)
@@ -102,7 +104,7 @@ class Drawer:
             offsetbox = TextArea(str(mz))
 
             ab = AnnotationBbox(offsetbox, (mz, intensity),
-                            xybox=(-20, 2 * np.log2(intensity)),
+                            xybox=(-22, 2 * np.log2(intensity)),
                             xycoords='data',
                             boxcoords="offset points",
                             arrowprops=dict(arrowstyle="->")
