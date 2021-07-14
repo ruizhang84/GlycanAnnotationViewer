@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk 
 from tkinter import filedialog
+from viewer import MakeWindow
 
 root = Tk()
 root.title("GlycanViewer")
@@ -25,19 +26,7 @@ def call_back2(x):
     print (x)
 
 def call_back():
-    window = Toplevel(root)
-    window.title("Spectrum Annotations")
-    
-    scale = ttk.Scale(window, command=call_back2, orient= HORIZONTAL, length= 400, from_ = 1, to = 11).pack()
-    print (mgf_path_var.get())
-    print (csv_path_var.get())
-
-class MakeWindow(tk.Toplevel):
-    def __init__(self, message):
-        tk.Toplevel.__init__(self) #instead of super
-        self.message = message
-        self.display = tk.Label(self, text=message)
-        self.display.pack()
+    MakeWindow(root, mgf_path_var.get(), csv_path_var.get())
 
 label_ms = ttk.Label(root, text="MS/MS Spectra File").grid(row=0, column=0, padx=5)
 button_ms = ttk.Button(root, command=open_mgf_file, text="Read MS/MS Files (*.mgf)").grid(row=0, column=1, padx=5, pady=10)
