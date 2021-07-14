@@ -44,14 +44,6 @@ class Drawer:
         self.spectra = read_mgf(spectrum_path)
         self.df_mark = pd.read_csv(annotated_path)
         self.scans = sorted(self.df_mark.scan)
-    
-    def display(self, scan=15666, figsize=(4, 4)):
-        fig, ax = plt.subplots(figsize=figsize)
-        df_select = self.df_mark[self.df_mark.scan == scan]
-        glycan_id = get_glycan_id(df_select.glycan.iloc[0])
-
-        # plot glycan
-        generate_glycan(glycan_id, "glycan_temp.png")
 
     def draw(self, scan=15666, figsize=(8, 3)):
         df_select = self.df_mark[self.df_mark.scan == scan]
@@ -68,6 +60,19 @@ class Drawer:
         ax.set_ylabel("Intensity")
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
+
+        # plot glycan
+        generate_glycan(glycan_id)
+        img_x = np.min(peaks.mz) * 1.2
+        img_y = np.max(peaks.intensity) * 0.8
+        img_insert = plt.imread('temp.png')
+        imagebox = OffsetImage(img_insert, zoom=0.5)
+        imagebox.image.axes = ax
+
+        ab = AnnotationBbox(imagebox, (img_x, img_y))
+        ab.patch.set_edgecolor('none')
+        ab.patch.set_facecolor('none')
+        ax.add_artist(ab)
 
         # annotations
         for index, row in self.df_mark[self.df_mark.scan == 15666].iterrows():
