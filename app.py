@@ -22,9 +22,6 @@ def open_csv_file():
             )
     csv_path_var.set(tf)
 
-def call_back2(x):
-    print (x)
-
 def call_back():
     MakeWindow(root, mgf_path_var.get(), csv_path_var.get())
 

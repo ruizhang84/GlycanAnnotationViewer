@@ -10,6 +10,7 @@ class MakeWindow:
 
         self.window = Toplevel(root) #instead of super
         self.window.title("Spectrum Annotations")
+        self.window.geometry("1600x900")
 
         self.drawer = Drawer(f1, f2)
         print (f1, f2)

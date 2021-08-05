@@ -6,14 +6,14 @@ import matplotlib
 from matplotlib.patches import Circle
 from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage,
                                   AnnotationBbox)
-from plot_glycan import glycan_complex_plot
+from plot_glycan import glycan_table_plot
 import read_spectrum
 from read_spectrum import read_mgf, insert_peaks, cluster_peaks
 
 
 def get_figure_size(glycan_id, size=4, line_length = 1000):
     fig, ax = plt.subplots(figsize=(size, size))
-    glycan_complex_plot(0, 0, line_length, ax, glycan_id)
+    glycan_table_plot(0, 0, line_length, ax, glycan_id)
     ax.set_axis_off()
     x1, x2 = ax.get_xlim()
     y1, y2 = ax.get_ylim()
@@ -25,7 +25,7 @@ def get_figure_size(glycan_id, size=4, line_length = 1000):
 
 def generate_glycan(glycan_id, img_name="temp.png", size=4, line_length = 1000):
     fig, ax = plt.subplots(figsize=get_figure_size(glycan_id, size, line_length))
-    glycan_complex_plot(0, 0, 1000, ax, glycan_id)
+    glycan_table_plot(0, 0, 1000, ax, glycan_id)
     ax.set_axis_off()
     fig.savefig(img_name, transparent=True)
     fig.clear()
