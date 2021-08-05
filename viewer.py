@@ -10,7 +10,7 @@ class MakeWindow:
 
         self.window = Toplevel(root) #instead of super
         self.window.title("Spectrum Annotations")
-        self.window.geometry("1500x600")
+        self.window.geometry("1600x900")
 
         self.drawer = Drawer(f1, f2)
         print (f1, f2)
@@ -22,7 +22,7 @@ class MakeWindow:
         scale = ttk.Scale(self.window, command=lambda x: self.call_back(x, self.drawer.scans), orient= HORIZONTAL, length= 700, 
             variable=self.scan_select, from_ = 0, to = len(self.drawer.scans)-1).grid(row=0, column=1, padx=5, pady=10)
 
-        button_annot = ttk.Button(self.window, command=lambda :self.plot(self.drawer), text="View").grid(row=0, column=2, padx=5, pady=10)
+        button_annot = ttk.Button(self.window, command=lambda :self.plot(self.drawer), text="View").grid(row=0, column=3, padx=5, pady=10)
 
     def call_back(self, x, scans):
         index = int(float(x))
@@ -34,7 +34,7 @@ class MakeWindow:
         scan = self.drawer.scans[index]
 
         # plot glycan spectrum image
-        fig = self.drawer.draw(scan, figsize=(14, 5))
+        fig = self.drawer.draw(scan, figsize=(17, 5))
 
         # plot glycan structure
         img = Image.open("glycan.png")
@@ -43,12 +43,12 @@ class MakeWindow:
         img = ImageTk.PhotoImage(img)
         panel = Label(self.window, image=img)
         panel.image = img
-        panel.grid(row=1, column=0, pady=10)
+        panel.grid(row=0, column=2)
 
         # plot spectrum
         img = Image.open("annot.png")
         img = ImageTk.PhotoImage(img)
         panel = Label(self.window, image=img)
         panel.image = img
-        panel.grid(row=1, column=1, rowspan=4, columnspan=4, pady=10)
+        panel.grid(row=1, column=0, columnspan=5)
 

@@ -21,11 +21,11 @@ def get_figure_size(glycan_id, size=4, line_length = 1000):
     fig.clear()
     ax.clear()
     plt.close()
-    return  abs(x1 - x2) / line_length / 4, abs(y1 - y2) / line_length / 4
+    return  abs(x1 - x2) / line_length / size / 2 + ratio, abs(y1 - y2) / line_length / size / 2 + 1
 
 def generate_glycan(glycan_id, img_name="glycan.png", size=4, line_length = 1000):
     fig, ax = plt.subplots(figsize=get_figure_size(glycan_id, size, line_length))
-    glycan_table_plot(0, 0, 1000, ax, glycan_id)
+    glycan_table_plot(0, 0, line_length, ax, glycan_id)
     ax.set_axis_off()
     fig.savefig(img_name, transparent=True)
     fig.clear()
@@ -64,7 +64,7 @@ class Drawer:
         ax.spines['top'].set_visible(False)
 
         # plot glycan
-        generate_glycan(glycan_id)
+        generate_glycan(glycan_id, 'glycan.png')
         # img_x = np.min(peaks.mz) * 1.2
         # img_y = np.max(peaks.intensity)
         # img_insert = plt.imread('glycan.png')
@@ -88,14 +88,14 @@ class Drawer:
             
             generate_glycan(get_fragment_id(row.fragments), 'annot.png')
             img_insert = plt.imread('annot.png')
-            imagebox = OffsetImage(img_insert, zoom=0.25)
+            imagebox = OffsetImage(img_insert, zoom=0.2)
             imagebox.image.axes = ax
 
             ab = AnnotationBbox(imagebox, (mz, intensity),
                             xybox=(22, np.log2(intensity)),
                             xycoords='data',
                             boxcoords="offset points",
-                            arrowprops=dict(arrowstyle="->")
+                            #arrowprops=dict(arrowstyle="-")
                             )
             ab.patch.set_edgecolor('none')
             ab.patch.set_facecolor('none')

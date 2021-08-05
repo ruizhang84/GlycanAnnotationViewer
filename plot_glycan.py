@@ -145,7 +145,8 @@ def glycan_complex_plot(start_x, start_y, line_length, ax, table):
         # chain
         gap_bar = compute_gap(d=d, r=d)
         for j in range(2):
-            if draw_table[6 + i * 2 + j] == 0:
+            if (draw_table[6 + i * 2 + j] + draw_table[10 + i * 2 + j]
+             + draw_table[14 + i * 2 + j] + draw_table[18 + i * 2 + j]) == 0:
                 continue
             
             x_bar_bar = x_bar
@@ -163,7 +164,7 @@ def glycan_complex_plot(start_x, start_y, line_length, ax, table):
                                        orient=select_orient(j), color="k", width=2, r=d,
                                        d=compute_distance(gap_bar, d))
                 draw_table[6 + i * 2 + j] -= 1
-            else:
+            elif draw_table[6 + i * 2 + j] > 0:
                 plot_line(x_bar_bar, y_bar_bar + d, x_bar_bar, y_bar_bar + 2 * d, color="k", width=2)
                 obj = plot_rectangle(x_bar_bar, y_bar_bar + 3 * d, color="b", r=d)
                 ax.add_patch(obj)
@@ -215,6 +216,7 @@ def glycan_complex_plot(start_x, start_y, line_length, ax, table):
                     total += draw_table[18 + i * 2 + j]
                 if total == 0:
                     break 
+
 
 def glycan_hybrid_plot(start_x, start_y, line_length, ax, table):
     if len(table) != 18:
@@ -310,7 +312,7 @@ def glycan_hybrid_plot(start_x, start_y, line_length, ax, table):
         elif i == 1:
             branch_full = (draw_table[8] > 0 and draw_table[9] > 0)
             for j in range(2):
-                if draw_table[8 + j] == 0:
+                if draw_table[8 + j] + draw_table[10 + j] + draw_table[12 + j] + draw_table[14 + j] == 0:
                     continue
 
                 x_bar_bar = x_bar
