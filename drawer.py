@@ -23,7 +23,7 @@ def get_figure_size(glycan_id, size=4, line_length = 1000):
     plt.close()
     return  abs(x1 - x2) / line_length / 4, abs(y1 - y2) / line_length / 4
 
-def generate_glycan(glycan_id, img_name="temp.png", size=4, line_length = 1000):
+def generate_glycan(glycan_id, img_name="glycan.png", size=4, line_length = 1000):
     fig, ax = plt.subplots(figsize=get_figure_size(glycan_id, size, line_length))
     glycan_table_plot(0, 0, 1000, ax, glycan_id)
     ax.set_axis_off()
@@ -65,16 +65,16 @@ class Drawer:
 
         # plot glycan
         generate_glycan(glycan_id)
-        img_x = np.min(peaks.mz) * 1.2
-        img_y = np.max(peaks.intensity)
-        img_insert = plt.imread('temp.png')
-        imagebox = OffsetImage(img_insert, zoom=0.3)
-        imagebox.image.axes = ax
+        # img_x = np.min(peaks.mz) * 1.2
+        # img_y = np.max(peaks.intensity)
+        # img_insert = plt.imread('glycan.png')
+        # imagebox = OffsetImage(img_insert, zoom=0.3)
+        # imagebox.image.axes = ax
 
-        ab = AnnotationBbox(imagebox, (img_x, img_y))
-        ab.patch.set_edgecolor('none')
-        ab.patch.set_facecolor('none')
-        ax.add_artist(ab)
+        # ab = AnnotationBbox(imagebox, (img_x, img_y))
+        # ab.patch.set_edgecolor('none')
+        # ab.patch.set_facecolor('none')
+        # ax.add_artist(ab)
 
         # annotations
         for index, row in self.df_mark[self.df_mark.scan == scan].iterrows():
@@ -86,8 +86,8 @@ class Drawer:
             if kmeans.predict([[intensity]])[0] == low_index:
                 continue
             
-            generate_glycan(get_fragment_id(row.fragments), 'temp.png')
-            img_insert = plt.imread('temp.png')
+            generate_glycan(get_fragment_id(row.fragments), 'annot.png')
+            img_insert = plt.imread('annot.png')
             imagebox = OffsetImage(img_insert, zoom=0.25)
             imagebox.image.axes = ax
 
@@ -113,7 +113,7 @@ class Drawer:
             ab.patch.set_facecolor('none')
             ax.add_artist(ab)
         # save
-        fig.savefig("temp.png", transparent=True)
+        fig.savefig("annot.png", transparent=True)
         return fig
 
 if __name__ == "__main__":

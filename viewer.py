@@ -10,7 +10,7 @@ class MakeWindow:
 
         self.window = Toplevel(root) #instead of super
         self.window.title("Spectrum Annotations")
-        self.window.geometry("1600x900")
+        self.window.geometry("1500x600")
 
         self.drawer = Drawer(f1, f2)
         print (f1, f2)
@@ -33,10 +33,22 @@ class MakeWindow:
         index = int(self.scan_select.get())
         scan = self.drawer.scans[index]
 
-        # plot spectrum
-        fig = self.drawer.draw(scan)
-        img = Image.open("temp.png")
+        # plot glycan spectrum image
+        fig = self.drawer.draw(scan, figsize=(14, 5))
+
+        # plot glycan structure
+        img = Image.open("glycan.png")
+        (width, height) = (img.width // 3, img.height // 3)
+        img = img.resize((width, height), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)
         panel = Label(self.window, image=img)
         panel.image = img
-        panel.grid(row=2, rowspan=4, columnspan=4, padx=5, pady=10)
+        panel.grid(row=1, column=0, pady=10)
+
+        # plot spectrum
+        img = Image.open("annot.png")
+        img = ImageTk.PhotoImage(img)
+        panel = Label(self.window, image=img)
+        panel.image = img
+        panel.grid(row=1, column=1, rowspan=4, columnspan=4, pady=10)
+
